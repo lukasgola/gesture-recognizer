@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import math
 
 # Initialize MediaPipe Drawing module for drawing landmarks
 mp_drawing = mp.solutions.drawing_utils
@@ -15,6 +16,14 @@ cap = cv2.VideoCapture(0)
 # Initialize variables for gesture recognition
 prev_gesture = None
 
+# Function to calculate Euclidean distance between two points
+def calculate_distance(point1, point2):
+    return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2 + (point1.z - point2.z)**2)
+
+# Landmark indices for the points you want to measure distance between
+point1_index = mp_hands.HandLandmark.THUMB_TIP
+point2_index = mp_hands.HandLandmark.INDEX_FINGER_TIP
+
 while cap.isOpened():
     ret, frame = cap.read()
     
@@ -22,7 +31,7 @@ while cap.isOpened():
         continue
 
     # Flip the frame horizontally
-    frame = cv2.flip(frame, 1)
+    #frame = cv2.flip(frame, 1)
     
     # Convert the frame to RGB format
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -38,27 +47,30 @@ while cap.isOpened():
             if results.multi_handedness:
                 # Get the handedness of the current hand
                 handedness = results.multi_handedness[idx].classification[0].label
+                if handedness == "Right":
+                    handedness = "Left"
+                else:
+                    handedness = "Right"
                 # Overlay handedness as text on the frame
-                cv2.putText(frame, handedness, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                cv2.putText(frame, handedness, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 4, cv2.LINE_AA)
             
             # Draw landmarks on the frame
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
             
             
-            # Recognize thumb up gesture based on hand landmarks
-            thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-            index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
-            middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
-            ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
-            pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
+            # Get the coordinates of the two points
+            point1 = hand_landmarks.landmark[point1_index]
+            point2 = hand_landmarks.landmark[point2_index]
             
-            # Check if the thumb tip is above the other finger tips
-            if thumb_tip.y < index_tip.y and thumb_tip.y < middle_tip.y and thumb_tip.y < ring_tip.y and thumb_tip.y < pinky_tip.y:
-                current_gesture = "Thumb Up"
-            else:
-                current_gesture = ""
-
-            cv2.putText(frame, current_gesture, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            # Calculate the distance between the two points
+            distance = calculate_distance(point1, point2)
+            
+            # Draw landmarks on the frame
+            mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+            
+            # Overlay the distance as text on the frame
+            cv2.putText(frame, f"Distance: {distance:.2f} units", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 4, cv2.LINE_AA)
+            
     
     # Display the frame with hand landmarks
     cv2.imshow('Hand Recognition', frame)
