@@ -72,8 +72,9 @@ while cap.isOpened():
             point1 = hand_landmarks.landmark[point1_index]
             point2 = hand_landmarks.landmark[point2_index]
 
-            print(point2.x)
-            pyautogui.moveTo(point2.x*1000, point2.y*1000)
+            multiplier = 1000
+
+            pyautogui.moveTo(point2.x*multiplier, point2.y*multiplier, duration=0.1)
             
             # Calculate the distance between the two points
             distance = calculate_distance(point1, point2)
