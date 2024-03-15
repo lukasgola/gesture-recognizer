@@ -2,6 +2,14 @@ import cv2
 import mediapipe as mp
 import math
 
+import pyautogui
+
+# Disable fail-safe mechanism
+pyautogui.FAILSAFE = False
+
+# Move mouse to initial position
+pyautogui.moveTo(0, 0)
+
 # Initialize MediaPipe Drawing module for drawing landmarks
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -11,7 +19,7 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands()
 
 # Open a video capture object (0 for the default camera)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Initialize variables for gesture recognition
 prev_gesture = None
@@ -31,7 +39,7 @@ while cap.isOpened():
         continue
 
     # Flip the frame horizontally
-    #frame = cv2.flip(frame, 1)
+    frame = cv2.flip(frame, 1)
     
     # Convert the frame to RGB format
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -56,11 +64,16 @@ while cap.isOpened():
             
             # Draw landmarks on the frame
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+
             
             
             # Get the coordinates of the two points
             point1 = hand_landmarks.landmark[point1_index]
             point2 = hand_landmarks.landmark[point2_index]
+
+            print(point2.x)
+            pyautogui.moveTo(point2.x*1000, point2.y*1000)
             
             # Calculate the distance between the two points
             distance = calculate_distance(point1, point2)
