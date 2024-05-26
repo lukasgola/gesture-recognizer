@@ -2,14 +2,6 @@ import cv2
 import mediapipe as mp
 import math
 
-import pyautogui
-
-# Disable fail-safe mechanism
-pyautogui.FAILSAFE = False
-
-# Move mouse to initial position
-pyautogui.moveTo(0, 0)
-
 # Initialize MediaPipe Drawing module for drawing landmarks
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -19,18 +11,57 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands()
 
 # Open a video capture object (0 for the default camera)
-cap = cv2.VideoCapture(1)
-
-# Initialize variables for gesture recognition
-prev_gesture = None
+cap = cv2.VideoCapture(0)
 
 # Function to calculate Euclidean distance between two points
 def calculate_distance(point1, point2):
     return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2 + (point1.z - point2.z)**2)
 
-# Landmark indices for the points you want to measure distance between
-point1_index = mp_hands.HandLandmark.THUMB_TIP
-point2_index = mp_hands.HandLandmark.INDEX_FINGER_TIP
+# Function to recognize "thumb up" gesture
+def is_thumb_up(hand_landmarks):
+    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
+    thumb_ip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP]
+    thumb_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP]
+    thumb_cmc = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC]
+
+    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+    middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
+    ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
+    pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
+
+    # Check if thumb is up and other fingers are down
+    if (thumb_tip.y < thumb_ip.y < thumb_mcp.y < thumb_cmc.y and
+        index_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_DIP].y and
+        middle_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_DIP].y and
+        ring_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_DIP].y and
+        pinky_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_DIP].y):
+        return True
+    return False
+
+def is_fak_you(hand_landmarks):
+
+    middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
+    middle_dip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_DIP]
+    middle_pip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_PIP]
+    middle_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_MCP]
+
+    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+    index_pip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP]
+
+    ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
+    ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
+
+    pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
+    pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
+
+
+    if(middle_tip.y < middle_dip.y and middle_dip.y < middle_pip.y and middle_pip.y < middle_mcp.y and
+        index_tip.y > index_pip.y and
+        ring_tip.y > ring_pip.y and
+        pinky_tip.y > pinky_pip.y):
+        return True
+
+    return False
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -49,42 +80,17 @@ while cap.isOpened():
     
     # Check if hands are detected
     if results.multi_hand_landmarks:
-        for idx, hand_landmarks in enumerate(results.multi_hand_landmarks):
-
-            # Determine handedness (left or right)
-            if results.multi_handedness:
-                # Get the handedness of the current hand
-                handedness = results.multi_handedness[idx].classification[0].label
-                if handedness == "Right":
-                    handedness = "Left"
-                else:
-                    handedness = "Right"
-                # Overlay handedness as text on the frame
-                cv2.putText(frame, handedness, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 4, cv2.LINE_AA)
-            
-            # Draw landmarks on the frame
-            mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-
-
-            
-            
-            # Get the coordinates of the two points
-            point1 = hand_landmarks.landmark[point1_index]
-            point2 = hand_landmarks.landmark[point2_index]
-
-            multiplier = 1000
-
-            pyautogui.moveTo(point2.x*multiplier, point2.y*multiplier, duration=0.1)
-            
-            # Calculate the distance between the two points
-            distance = calculate_distance(point1, point2)
-            
+        for hand_landmarks in results.multi_hand_landmarks:
             # Draw landmarks on the frame
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
             
-            # Overlay the distance as text on the frame
-            cv2.putText(frame, f"Distance: {distance:.2f} units", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 4, cv2.LINE_AA)
-            
+            # Check for "thumb up" gesture
+            if is_thumb_up(hand_landmarks):
+                cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+                # Check for "thumb up" gesture
+            if is_fak_you(hand_landmarks):
+                cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
     
     # Display the frame with hand landmarks
     cv2.imshow('Hand Recognition', frame)
