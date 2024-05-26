@@ -13,12 +13,8 @@ hands = mp_hands.Hands()
 # Open a video capture object (0 for the default camera)
 cap = cv2.VideoCapture(0)
 
-# Function to calculate Euclidean distance between two points
-def calculate_distance(point1, point2):
-    return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2 + (point1.z - point2.z)**2)
-
 # Function to recognize "thumb up" gesture
-def is_thumb_up(hand_landmarks):
+def is_thumb_up_right(hand_landmarks):
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
     thumb_ip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP]
     thumb_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP]
@@ -29,12 +25,42 @@ def is_thumb_up(hand_landmarks):
     ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
     pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
 
+    index_pip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP]
+    middle_pip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_PIP]
+    ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
+    pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
+
     # Check if thumb is up and other fingers are down
     if (thumb_tip.y < thumb_ip.y < thumb_mcp.y < thumb_cmc.y and
-        index_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_DIP].y and
-        middle_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_DIP].y and
-        ring_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_DIP].y and
-        pinky_tip.y > hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_DIP].y):
+        index_tip.x > index_pip.x and
+        middle_tip.x > middle_pip.x and
+        ring_tip.x > ring_pip.x and
+        pinky_tip.x > pinky_pip.x):
+        return True
+    return False
+
+def is_thumb_up_left(hand_landmarks):
+    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
+    thumb_ip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP]
+    thumb_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP]
+    thumb_cmc = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC]
+
+    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+    middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
+    ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
+    pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
+
+    index_pip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP]
+    middle_pip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_PIP]
+    ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
+    pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
+
+    # Check if thumb is up and other fingers are down
+    if (thumb_tip.y < thumb_ip.y < thumb_mcp.y < thumb_cmc.y and
+        index_tip.x < index_pip.x and
+        middle_tip.x < middle_pip.x and
+        ring_tip.x < ring_pip.x and
+        pinky_tip.x < pinky_pip.x):
         return True
     return False
 
@@ -135,13 +161,25 @@ while cap.isOpened():
     
     # Check if hands are detected
     if results.multi_hand_landmarks:
-        for hand_landmarks in results.multi_hand_landmarks:
+        for idx, hand_landmarks in enumerate(results.multi_hand_landmarks):
             # Draw landmarks on the frame
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+            # Determine handedness (left or right)
+            if results.multi_handedness:
+                # Get the handedness of the current hand
+                handedness = results.multi_handedness[idx].classification[0].label
+                if handedness == "Right":
+                     # Check for "thumb up" gesture
+                    if is_thumb_up_right(hand_landmarks):
+                        cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                else:
+                    # Check for "thumb up" gesture
+                    if is_thumb_up_left(hand_landmarks):
+                        cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
             
-            # Check for "thumb up" gesture
-            if is_thumb_up(hand_landmarks):
-                cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+           
 
             # Check for "thumb up" gesture
             if is_fak_you(hand_landmarks):
