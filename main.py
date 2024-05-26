@@ -63,6 +63,33 @@ def is_fak_you(hand_landmarks):
 
     return False
 
+def is_left(hand_landmarks):
+    middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
+    middle_dip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_DIP]
+    middle_pip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_PIP]
+    middle_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_MCP]
+
+    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+    index_pip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP]
+
+    ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
+    ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
+
+    pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
+    pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
+
+    wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
+
+    if( middle_tip.x > wrist.x and middle_tip.x > middle_mcp.x and middle_tip.x > middle_pip.x and middle_tip.x > middle_dip.x and
+       index_tip.x > wrist.x and index_tip.x > index_pip.x and
+       ring_tip.x > wrist.x and ring_tip.x > ring_pip.x and
+       pinky_tip.x and wrist.x and pinky_tip.x > pinky_pip.x
+       ):
+        return True
+
+    return False
+
+
 while cap.isOpened():
     ret, frame = cap.read()
     
@@ -88,9 +115,13 @@ while cap.isOpened():
             if is_thumb_up(hand_landmarks):
                 cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-                # Check for "thumb up" gesture
+            # Check for "thumb up" gesture
             if is_fak_you(hand_landmarks):
                 cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+                # Check for "thumb up" gesture
+            if is_left(hand_landmarks):
+                cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
     
     # Display the frame with hand landmarks
     cv2.imshow('Hand Recognition', frame)
