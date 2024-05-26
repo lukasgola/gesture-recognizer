@@ -13,6 +13,10 @@ hands = mp_hands.Hands()
 # Open a video capture object (0 for the default camera)
 cap = cv2.VideoCapture(0)
 
+
+ready = True
+
+
 # Function to recognize "thumb up" gesture
 def is_thumb_up_right(hand_landmarks):
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
@@ -171,28 +175,36 @@ while cap.isOpened():
                 handedness = results.multi_handedness[idx].classification[0].label
                 if handedness == "Right":
                      # Check for "thumb up" gesture
-                    if is_thumb_up_right(hand_landmarks):
+                    if is_thumb_up_right(hand_landmarks) and ready :
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        ready = False
                 else:
                     # Check for "thumb up" gesture
-                    if is_thumb_up_left(hand_landmarks):
+                    if is_thumb_up_left(hand_landmarks) and ready:
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        ready = False
 
             
            
 
             # Check for "thumb up" gesture
-            if is_fak_you(hand_landmarks):
+            if is_fak_you(hand_landmarks) and ready:
                 cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                ready = False
 
             # Check for "thumb up" gesture
-            if is_left(hand_landmarks):
+            if is_left(hand_landmarks) and ready:
                 cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                ready = False
 
-                            # Check for "thumb up" gesture
-            if is_right(hand_landmarks):
+            # Check for "thumb up" gesture
+            if is_right(hand_landmarks) and ready:
                 cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                ready = False
+
     
+    ready = True
+
     # Display the frame with hand landmarks
     cv2.imshow('Hand Recognition', frame)
     
