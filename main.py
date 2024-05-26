@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-import math
+import socket
 
 # Initialize MediaPipe Drawing module for drawing landmarks
 mp_drawing = mp.solutions.drawing_utils
@@ -13,8 +13,14 @@ hands = mp_hands.Hands()
 # Open a video capture object (0 for the default camera)
 cap = cv2.VideoCapture(0)
 
-
+# Flag to avoid to gestures at the time
 ready = True
+
+# Socket setup
+UDP_IP = '127.0.0.1'
+UDP_PORT = 12345 
+MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 # Function to recognize "thumb up" gesture
@@ -177,11 +183,13 @@ while cap.isOpened():
                      # Check for "thumb up" gesture
                     if is_thumb_up_right(hand_landmarks) and ready :
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
                         ready = False
                 else:
                     # Check for "thumb up" gesture
                     if is_thumb_up_left(hand_landmarks) and ready:
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
                         ready = False
 
             
@@ -190,19 +198,24 @@ while cap.isOpened():
             # Check for "thumb up" gesture
             if is_fak_you(hand_landmarks) and ready:
                 cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
                 ready = False
 
             # Check for "thumb up" gesture
             if is_left(hand_landmarks) and ready:
                 cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
                 ready = False
 
             # Check for "thumb up" gesture
             if is_right(hand_landmarks) and ready:
                 cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
                 ready = False
 
-    
+        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+        print("Message sent")
+
     ready = True
 
     # Display the frame with hand landmarks
