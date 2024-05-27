@@ -9,7 +9,6 @@ Po wykryciu okreslonego zmieniana jest wiadomosc wysylana na AGV za pomocą sock
 [0x00, 0x00, 0xFF, 0x00] - TURN LEFT
 [0x00, 0x00, 0x00, 0xFF] - TURN RIGHT
 
-
 """
 
 import cv2
@@ -56,8 +55,6 @@ def is_thumb_up_right(hand_landmarks):
 
     wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
 
-
-    # Check if thumb is up and other fingers are down
     if (thumb_tip.y < thumb_ip.y < thumb_mcp.y < thumb_cmc.y and
         index_tip.x > index_pip.x and
         middle_tip.x > middle_pip.x and
@@ -92,9 +89,6 @@ def is_stop(hand_landmarks):
     pinky_dip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_DIP]
     pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
     pinky_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_MCP]
-
-    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-    thumb_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP]
 
     wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
 
@@ -207,19 +201,19 @@ while cap.isOpened():
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
                         ready = False
-                    # Check for "thumb up" gesture
+                    # Check for "stop" gesture
                     elif is_stop(hand_landmarks) and ready:
                         cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
                         ready = False
-                        # Check for "thumb up" gesture
+                        # Check for "turn right" gesture
                     elif is_right(hand_landmarks) and ready:
                         cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
                         ready = False
 
                 else:
-                    # Check for "thumb up" gesture
+                    # Check for "turn left" gesture
                     if is_left(hand_landmarks) and ready:
                         cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
