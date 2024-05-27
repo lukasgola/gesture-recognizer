@@ -40,41 +40,23 @@ def is_thumb_up_right(hand_landmarks):
     ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
     pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
 
+    wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
+
+
     # Check if thumb is up and other fingers are down
     if (thumb_tip.y < thumb_ip.y < thumb_mcp.y < thumb_cmc.y and
         index_tip.x > index_pip.x and
         middle_tip.x > middle_pip.x and
         ring_tip.x > ring_pip.x and
-        pinky_tip.x > pinky_pip.x):
+        pinky_tip.x > pinky_pip.x and
+        index_tip.x < wrist.x and middle_tip.x < wrist.x and ring_tip.x < wrist.x and pinky_tip.x < wrist.x
+        
+        ):
         return True
     return False
 
-def is_thumb_up_left(hand_landmarks):
-    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-    thumb_ip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP]
-    thumb_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP]
-    thumb_cmc = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC]
 
-    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
-    middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
-    ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
-    pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
-
-    index_pip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP]
-    middle_pip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_PIP]
-    ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
-    pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
-
-    # Check if thumb is up and other fingers are down
-    if (thumb_tip.y < thumb_ip.y < thumb_mcp.y < thumb_cmc.y and
-        index_tip.x < index_pip.x and
-        middle_tip.x < middle_pip.x and
-        ring_tip.x < ring_pip.x and
-        pinky_tip.x < pinky_pip.x):
-        return True
-    return False
-
-def is_fak_you(hand_landmarks):
+def is_stop(hand_landmarks):
 
     middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
     middle_dip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_DIP]
@@ -82,19 +64,35 @@ def is_fak_you(hand_landmarks):
     middle_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_MCP]
 
     index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+    index_dip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_DIP]
     index_pip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP]
+    index_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP]
 
     ring_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_TIP]
+    ring_dip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_DIP]
     ring_pip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_PIP]
+    ring_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_MCP]
+
 
     pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
+    pinky_dip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_DIP]
     pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
+    pinky_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_MCP]
 
+    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
+    thumb_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP]
+
+    wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
 
     if(middle_tip.y < middle_dip.y and middle_dip.y < middle_pip.y and middle_pip.y < middle_mcp.y and
-        index_tip.y > index_pip.y and
-        ring_tip.y > ring_pip.y and
-        pinky_tip.y > pinky_pip.y):
+        index_tip.y < index_dip.y and index_dip.y < index_pip.y and index_pip.y < index_mcp.y and
+        ring_tip.y < ring_dip.y and ring_dip.y < ring_pip.y and ring_pip.y < ring_mcp.y and
+        pinky_tip.y < pinky_dip.y and pinky_dip.y < pinky_pip.y and pinky_pip.y < pinky_mcp.y and
+        index_mcp.x < middle_mcp.x < ring_mcp.x < pinky_mcp.x and
+        wrist.x > index_mcp.x and
+        wrist.x < pinky_mcp.x
+        
+        ):
         return True
 
     return False
@@ -114,12 +112,17 @@ def is_left(hand_landmarks):
     pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
     pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
 
+    index_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP]
+    ring_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_MCP]
+    pinky_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_MCP]
+
     wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
 
     if( middle_tip.x > wrist.x and middle_tip.x > middle_mcp.x and middle_tip.x > middle_pip.x and middle_tip.x > middle_dip.x and
        index_tip.x > wrist.x and index_tip.x > index_pip.x and
        ring_tip.x > wrist.x and ring_tip.x > ring_pip.x and
-       pinky_tip.x > wrist.x and pinky_tip.x > pinky_pip.x
+       pinky_tip.x > wrist.x and pinky_tip.x > pinky_pip.x and
+       index_mcp.y < middle_mcp.y < ring_mcp.y < pinky_mcp.y
        ):
         return True
 
@@ -141,12 +144,17 @@ def is_right(hand_landmarks):
     pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
     pinky_pip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_PIP]
 
+    index_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_MCP]
+    ring_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.RING_FINGER_MCP]
+    pinky_mcp = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_MCP]
+
     wrist = hand_landmarks.landmark[mp_hands.HandLandmark.WRIST]
 
     if( middle_tip.x < wrist.x and middle_tip.x < middle_mcp.x and middle_tip.x < middle_pip.x and middle_tip.x < middle_dip.x and
        index_tip.x < wrist.x and index_tip.x < index_pip.x and
        ring_tip.x < wrist.x and ring_tip.x < ring_pip.x and
-       pinky_tip.x < wrist.x and pinky_tip.x < pinky_pip.x
+       pinky_tip.x < wrist.x and pinky_tip.x < pinky_pip.x and
+        index_mcp.y < middle_mcp.y < ring_mcp.y < pinky_mcp.y
        ):
         return True
 
@@ -185,33 +193,32 @@ while cap.isOpened():
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
                         ready = False
+                    # Check for "thumb up" gesture
+                    if is_stop(hand_landmarks) and ready:
+                        cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
+                        ready = False
+                        # Check for "thumb up" gesture
+                    if is_right(hand_landmarks) and ready:
+                        cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
+                        ready = False
+
                 else:
                     # Check for "thumb up" gesture
-                    if is_thumb_up_left(hand_landmarks) and ready:
-                        cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                        MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
+                    if is_left(hand_landmarks) and ready:
+                        cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
                         ready = False
 
             
            
 
-            # Check for "thumb up" gesture
-            if is_fak_you(hand_landmarks) and ready:
-                cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
-                ready = False
+            
 
-            # Check for "thumb up" gesture
-            if is_left(hand_landmarks) and ready:
-                cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
-                ready = False
+            
 
-            # Check for "thumb up" gesture
-            if is_right(hand_landmarks) and ready:
-                cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
-                ready = False
+            
 
         sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
         print("Message sent")
