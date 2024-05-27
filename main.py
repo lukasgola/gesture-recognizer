@@ -194,12 +194,12 @@ while cap.isOpened():
                         MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
                         ready = False
                     # Check for "thumb up" gesture
-                    if is_stop(hand_landmarks) and ready:
+                    elif is_stop(hand_landmarks) and ready:
                         cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
                         ready = False
                         # Check for "thumb up" gesture
-                    if is_right(hand_landmarks) and ready:
+                    elif is_right(hand_landmarks) and ready:
                         cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
                         ready = False
@@ -210,18 +210,10 @@ while cap.isOpened():
                         cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
                         MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
                         ready = False
-
-            
-           
-
-            
-
-            
-
             
 
         sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-        print("Message sent")
+        print("Message sent", str(MESSAGE))
 
     ready = True
 
