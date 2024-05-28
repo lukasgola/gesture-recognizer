@@ -16,7 +16,7 @@ This project implements a gesture recognizer to control an Automated Guided Vehi
 
 ## Preview
 <div>
-  <img src='[https://github.com/lukasgola/meeting-app/blob/main/assets/m-a1.png](https://github.com/lukasgola/gesture-recognizer/blob/main/left.png)' width=200 />
+  <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/left.png' width=200 />
   <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a2.png' width=200 />
   <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a3.png' width=200 />
   <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a4.png' width=200 />
