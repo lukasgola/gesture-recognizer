@@ -8,14 +8,26 @@ This project implements a gesture recognizer to control an Automated Guided Vehi
 
 #### Right Hand (Prawa Ręka):
 - **GO**: Moves the AGV forward
-    <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/go.png' width=400 />
+  <div>
+      <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/go.png' width=400 />
+  </div>
+
 - **STOP**: Stops the AGV
-    <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/stop.png' width=400 />
+  <div>
+      <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/stop.png' width=400 />
+  </div>
+
 - **TURN RIGHT**: Turns the AGV to the right
-    <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/right.png' width=400 />
+  <div>
+      <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/right.png' width=400 />
+  </div>
+
 
 #### Left Hand (Lewa Ręka):
 - **TURN LEFT**: Turns the AGV to the left
-  <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/left.png' width=400 />
+  <div>
+      <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/left.png' width=400 />
+  </div>
+
 
 
