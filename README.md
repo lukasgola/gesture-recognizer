@@ -16,6 +16,6 @@ This project implements a gesture recognizer to control an Automated Guided Vehi
 
 ## Preview
 <div>
-  <video src="https://github.com/lukasgola/gesture-recognizer/blob/main/demo.mov" width="600" controls></video>
+  <video src="https://github.com/lukasgola/gesture-recognizer/blob/main/demo.mov" width="600" height="400" controls></video>
 </div>
 
