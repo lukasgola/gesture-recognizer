@@ -8,19 +8,14 @@ This project implements a gesture recognizer to control an Automated Guided Vehi
 
 #### Right Hand (Prawa Ręka):
 - **GO**: Moves the AGV forward
+    <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/go.png' width=400 />
 - **STOP**: Stops the AGV
+    <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/stop.png' width=400 />
 - **TURN RIGHT**: Turns the AGV to the right
+    <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/right.png' width=400 />
 
 #### Left Hand (Lewa Ręka):
 - **TURN LEFT**: Turns the AGV to the left
+  <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/left.png' width=400 />
 
-## Preview
-<div>
-  <img src='https://github.com/lukasgola/gesture-recognizer/blob/main/left.png' width=200 />
-  <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a2.png' width=200 />
-  <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a3.png' width=200 />
-  <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a4.png' width=200 />
-  <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a5.png' width=200 />
-  <img src='https://github.com/lukasgola/meeting-app/blob/main/assets/m-a6.png' width=200 />
-</div>
 
