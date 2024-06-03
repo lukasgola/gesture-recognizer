@@ -14,6 +14,7 @@ Po wykryciu okreslonego zmieniana jest wiadomosc wysylana na AGV za pomocą sock
 import cv2
 import mediapipe as mp
 import socket
+import struct
 
 # Initialize MediaPipe Drawing module for drawing landmarks
 mp_drawing = mp.solutions.drawing_utils
@@ -30,10 +31,15 @@ cap = cv2.VideoCapture(0)
 ready = True
 
 # Socket setup
-UDP_IP = '127.0.0.1'
-UDP_PORT = 12345 
+TCP_IP = '127.0.0.1'
+TCP_PORT = 10000 
 MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Connect to the server
+server_address = (TCP_IP, TCP_PORT)
+print(f"Connecting to {server_address[0]} port {server_address[1]}")
+sock.connect(server_address)
 
 
 # Function to recognize "thumb up" gesture
@@ -65,7 +71,6 @@ def is_thumb_up_right(hand_landmarks):
         ):
         return True
     return False
-
 
 def is_stop(hand_landmarks):
 
@@ -220,7 +225,8 @@ while cap.isOpened():
                         ready = False
             
 
-        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+        message = struct.pack('!I', len(MESSAGE)) + MESSAGE
+        sock.sendall(message)
         print("Message sent", str(MESSAGE))
 
     ready = True
@@ -232,6 +238,10 @@ while cap.isOpened():
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+
+sock.close()
+
 # Release the video capture object and close the OpenCV windows
 cap.release()
 cv2.destroyAllWindows()
+
