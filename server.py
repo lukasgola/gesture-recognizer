@@ -1,5 +1,4 @@
 import socket
-import struct
 
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,26 +16,14 @@ def start_server():
             print(f'Connection from {client_address}')
             
             while True:
-                # First, receive the size of the incoming data
-                data_size = connection.recv(4)
-                if not data_size:
+                # Receive data from the client
+                data = connection.recv(1024)  # Adjust buffer size if needed
+                if not data:
                     break
                 
-                # Unpack the size of the data
-                data_size = struct.unpack('!I', data_size)[0]
-
-                # Now receive the actual data
-                data = b''
-                while len(data) < data_size:
-                    packet = connection.recv(data_size - len(data))
-                    if not packet:
-                        break
-                    data += packet
-                
-                if data:
-                    print(f'Received: {data}')
-                else:
-                    break
+                # Decode the received data
+                message = data.decode('utf-8')
+                print(f'Received: {message}')
 
         finally:
             connection.close()

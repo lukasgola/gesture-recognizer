@@ -32,14 +32,18 @@ ready = True
 
 # Socket setup
 TCP_IP = '127.0.0.1'
+# TCP_IP = '192.168.0.10'
 TCP_PORT = 10000 
-MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
+# MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
+MESSAGE = ''
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Connect to the server
 server_address = (TCP_IP, TCP_PORT)
 print(f"Connecting to {server_address[0]} port {server_address[1]}")
 sock.connect(server_address)
+
+PREV = ''
 
 
 # Function to recognize "thumb up" gesture
@@ -141,7 +145,6 @@ def is_left(hand_landmarks):
 
     return False
 
-
 def is_right(hand_landmarks):
     middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
     middle_dip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_DIP]
@@ -204,30 +207,36 @@ while cap.isOpened():
                      # Check for "thumb up" gesture
                     if is_thumb_up_right(hand_landmarks) and ready :
                         cv2.putText(frame, "GO", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                        MESSAGE = bytes([0xFF, 0x00, 0x00, 0x00])
+                        # MESSAGE = bytes([0x88, 0x00, 0x00, 0x00])
+                        MESSAGE = 'thumb'
                         ready = False
                     # Check for "stop" gesture
                     elif is_stop(hand_landmarks) and ready:
                         cv2.putText(frame, "STOP", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                        MESSAGE = bytes([0x00, 0xFF, 0x00, 0x00])
+                        # MESSAGE = bytes([0x00, 0x88, 0x00, 0x00])
+                        MESSAGE = 'stop'
                         ready = False
                         # Check for "turn right" gesture
                     elif is_right(hand_landmarks) and ready:
                         cv2.putText(frame, "RIGHT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                        MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
+                        # MESSAGE = bytes([0x00, 0x00, 0x00, 0xFF])
+                        MESSAGE = 'right'
                         ready = False
 
                 else:
                     # Check for "turn left" gesture
                     if is_left(hand_landmarks) and ready:
                         cv2.putText(frame, "LEFT", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                        MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
+                        # MESSAGE = bytes([0x00, 0x00, 0xFF, 0x00])
+                        MESSAGE = 'left'
                         ready = False
             
-
-        message = struct.pack('!I', len(MESSAGE)) + MESSAGE
-        sock.sendall(message)
-        print("Message sent", str(MESSAGE))
+        if(MESSAGE != PREV):
+            PREV = MESSAGE
+            message = struct.pack('!I', len(MESSAGE)) + MESSAGE.encode('utf-8')
+            # sock.send(message)
+            sock.send(MESSAGE.encode('utf-8'))
+            print("Message sent", str(MESSAGE))
 
     ready = True
 
