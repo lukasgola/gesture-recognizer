@@ -4,10 +4,10 @@ LEWA REKA: TURN LEFT
 
 Po wykryciu okreslonego zmieniana jest wiadomosc wysylana na AGV za pomocą socket'a.
 
-[0xFF, 0x00, 0x00, 0x00] - GO
-[0x00, 0xFF, 0x00, 0x00] - STOP
-[0x00, 0x00, 0xFF, 0x00] - TURN LEFT
-[0x00, 0x00, 0x00, 0xFF] - TURN RIGHT
+- GO
+- STOP
+- TURN LEFT
+- TURN RIGHT
 
 """
 
